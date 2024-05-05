@@ -181,10 +181,10 @@ pub struct Connection {
     pub address: SocketAddr,
     pub state: Arc<Mutex<ConnectionState>>,
     /// The queue used to send packets back to the connection.
-    send_queue: Arc<RwLock<SendQueue>>,
+    pub send_queue: Arc<RwLock<SendQueue>>,
     /// The queue used to recieve packets, this is read from by the server.
     /// This is only used internally.
-    recv_queue: Arc<Mutex<RecvQueue>>,
+    pub recv_queue: Arc<Mutex<RecvQueue>>,
     /// The network channel, this is where the connection will be recieving it's packets.
     /// This is interfaced to provide the api for `Connection::recv()`
     internal_net_recv: ConnNetChan,
@@ -199,6 +199,21 @@ pub struct Connection {
     /// being in memory longer than it should be.
     recv_time: Arc<AtomicU64>,
     tasks: Arc<Mutex<Vec<JoinHandle<()>>>>,
+}
+
+impl Clone for Connection {
+    fn clone(&self) -> Self {
+        return Connection {
+            address: self.address.clone(),
+            state: Arc::clone(&self.state),
+            send_queue: Arc::clone(&self.send_queue),
+            recv_queue: Arc::clone(&self.recv_queue),
+            internal_net_recv: Arc::clone(&self.internal_net_recv),
+            disconnect: Arc::clone(&self.disconnect),
+            recv_time: Arc::clone(&self.recv_time),
+            tasks: Arc::clone(&self.tasks)
+        }
+    }
 }
 
 impl Connection {

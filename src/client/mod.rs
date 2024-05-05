@@ -194,33 +194,6 @@ pub struct Client {
     id: u64,
 }
 
-impl Clone for Client {
-    fn clone(&self) -> Self {
-        let send_queue = match &self.send_queue {
-            Some(q) => {
-                Some(Arc::clone(&q))
-            },
-            None => None
-        };
-        Client {
-            state: Arc::clone(&self.state),
-            send_queue,
-            recv_queue: Arc::new(Mutex::new(RecvQueue::new())),
-            internal_recv: self.internal_recv.clone(),
-            internal_send: self.internal_send.clone(),
-            tasks: Arc::clone(&self.tasks),
-            close_notifier: Arc::clone(&self.close_notifier),
-            recv_time: Arc::clone(&self.recv_time),
-            timeout: self.timeout.clone(),
-            handshake_timeout: self.handshake_timeout.clone(),
-            handshake_attempts: self.handshake_attempts.clone(),
-            mtu: self.mtu.clone(),
-            version: self.version.clone(),
-            id: self.id.clone(),
-        }
-    }
-}
-
 impl Client {
     /// Creates a new client.
     /// > Note: This does not start a connection. You must use [Client::connect()] to start a connection.
